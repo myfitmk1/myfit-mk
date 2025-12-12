@@ -5,18 +5,20 @@ import { StatItem } from "../types";
 // Helper to get AI instance safely
 const getAI = () => {
   // @ts-ignore
+  // Vite ќе го замени process.env.API_KEY со вистинскиот стринг при Build
   const apiKey = process.env.API_KEY;
-  if (!apiKey) {
-    console.warn("API Key is missing. AI features will be disabled.");
-    return null;
+  
+  if (!apiKey || apiKey.includes("API_KEY")) {
+    console.warn("API Key is missing or invalid.");
+    // Fallback just in case
+    return new GoogleGenAI({ apiKey: "AIzaSyAhFtkZkZnnKpWg5ZeAyoiS2_1WBWUbDiI" });
   }
   return new GoogleGenAI({ apiKey });
 };
 
 export const generatePlan = async (topic: string): Promise<string> => {
   const ai = getAI();
-  if (!ai) return "AI Сервисот не е достапен (Недостасува API клуч). Ве молиме подесете го клучот за да генерирате план.";
-
+  
   try {
     const prompt = `Create a detailed, well-structured plan for the following request: "${topic}". 
     Format the output with clear headings, bullet points, and actionable steps. 
@@ -33,13 +35,12 @@ export const generatePlan = async (topic: string): Promise<string> => {
     return response.text || "No plan generated.";
   } catch (error) {
     console.error("Gemini Error:", error);
-    return "Грешка при генерирање на планот. Обидете се повторно.";
+    return "Грешка при генерирање на планот. Проверете интернет конекција.";
   }
 };
 
 export const generateImage = async (prompt: string): Promise<string> => {
   const ai = getAI();
-  if (!ai) throw new Error("Missing API Key");
   
   try {
     const response = await ai.models.generateContent({
@@ -72,7 +73,6 @@ export const generateImage = async (prompt: string): Promise<string> => {
 
 export const analyzeTextToStats = async (text: string): Promise<StatItem[]> => {
   const ai = getAI();
-  if (!ai) return [];
   
   try {
     const response = await ai.models.generateContent({

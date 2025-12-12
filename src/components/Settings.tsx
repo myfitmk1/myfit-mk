@@ -268,7 +268,7 @@ const Settings: React.FC<SettingsProps> = ({ settings, profile, onUpdateSettings
                 </div>
                 
                 <h3 className="text-3xl font-heading text-white mb-1 tracking-wider text-glow">MYFIT MK</h3>
-                <p className="text-xs font-mono text-brand-500 uppercase tracking-widest mb-6">ВЕРЗИЈА 2.2.1</p>
+                <p className="text-xs font-mono text-brand-500 uppercase tracking-widest mb-6">ВЕРЗИЈА 2.3.0</p>
                 
                 {/* Changelog Description */}
                 <div className="bg-[#1a1a1a] rounded-lg p-4 border border-[#333] mb-6 text-left max-w-lg mx-auto shadow-inner">
@@ -278,15 +278,11 @@ const Settings: React.FC<SettingsProps> = ({ settings, profile, onUpdateSettings
                     <ul className="text-xs text-brand-300 space-y-2 font-medium">
                         <li className="flex items-start gap-2">
                             <span className="text-accent">•</span>
-                            <span>Поправена синхронизација со GitHub</span>
+                            <span>Подобрен AI Тренер со строги правила</span>
                         </li>
                         <li className="flex items-start gap-2">
                             <span className="text-accent">•</span>
                             <span>Додадени нови вежби (260+)</span>
-                        </li>
-                        <li className="flex items-start gap-2">
-                            <span className="text-accent">•</span>
-                            <span>Додаден Radio Player за музика</span>
                         </li>
                     </ul>
                 </div>

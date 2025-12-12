@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Lock, Unlock, ShieldCheck, Copy, Check, Key, CalendarClock, UserCheck, Smartphone } from 'lucide-react';
+import { Lock, Unlock, ShieldCheck, Copy, Check, Key, CalendarClock, UserCheck, Smartphone, LogIn } from 'lucide-react';
 import { getDeviceId, validateLicenseKey, generateLicenseKey } from '../utils/licenseManager';
 import { ADMIN_GENERATOR_CODE } from '../constants';
 
@@ -106,6 +106,16 @@ const LicenseGate: React.FC<LicenseGateProps> = ({ onUnlock }) => {
                     </div>
 
                     <div className="space-y-6">
+                        {/* Enter App Button for Admin */}
+                        <button 
+                            onClick={onUnlock}
+                            className="w-full py-4 bg-green-600 hover:bg-green-500 text-white font-heading text-xl rounded transition-all active:scale-95 shadow-lg flex items-center justify-center gap-2 mb-4 border border-green-400"
+                        >
+                            <LogIn size={24} /> ВЛЕЗИ ВО АПЛИКАЦИЈА
+                        </button>
+
+                        <div className="h-px bg-[#333] my-4"></div>
+
                         <div className="bg-[#121212] p-4 rounded border border-[#333]">
                             <label className="text-[10px] text-brand-500 uppercase font-bold block mb-2">1. ID НА КОРИСНИК</label>
                             <div className="flex items-center gap-2">
@@ -139,7 +149,7 @@ const LicenseGate: React.FC<LicenseGateProps> = ({ onUnlock }) => {
                             onClick={handleGenerateKey}
                             className="w-full py-4 bg-white hover:bg-gray-200 text-black font-heading text-xl rounded transition-all active:scale-95 shadow-lg"
                         >
-                            ГЕНЕРИРАЈ КОД
+                            ГЕНЕРИРАЈ КОД ЗА КЛИЕНТ
                         </button>
 
                         {generatedKey && (
@@ -154,8 +164,8 @@ const LicenseGate: React.FC<LicenseGateProps> = ({ onUnlock }) => {
                             </div>
                         )}
 
-                        <button onClick={() => setIsAdminMode(false)} className="w-full text-brand-500 text-xs hover:text-white underline">
-                            &larr; Назад
+                        <button onClick={() => setIsAdminMode(false)} className="w-full text-brand-500 text-xs hover:text-white underline mt-4">
+                            &larr; Назад кон најава
                         </button>
                     </div>
                 </div>

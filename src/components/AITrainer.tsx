@@ -2,18 +2,25 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { GoogleGenAI } from "@google/genai";
 import { ChatMessage } from '../types';
-import { Send, Bot, User, Loader2, Sparkles } from 'lucide-react';
+import { Send, Bot, User, Loader2, Sparkles, Zap, Dumbbell, Utensils, HeartPulse } from 'lucide-react';
 
 interface AITrainerProps {
     userProfile: { name: string; level: string };
 }
+
+const SUGGESTIONS = [
+    { label: "Тренинг за Гради", icon: Dumbbell, prompt: "Направи ми експлозивен тренинг за гради за ниво " },
+    { label: "План за Исхрана", icon: Utensils, prompt: "Дај ми пример мени за еден ден за зголемување на мускулна маса." },
+    { label: "Кардио HIIT", icon: HeartPulse, prompt: "Предложи ми краток 20-минутен HIIT кардио тренинг." },
+    { label: "Совет за Опоравување", icon: Zap, prompt: "Како најбрзо да се опоравам после тежок тренинг на нозе?" }
+];
 
 const AITrainer: React.FC<AITrainerProps> = ({ userProfile }) => {
     const [messages, setMessages] = useState<ChatMessage[]>([
         {
             id: '1',
             role: 'model',
-            text: `Здраво ${userProfile.name || 'Шампионе'}! Јас сум твојот MyFit AI тренер. Како можам да ти помогнам денес со твојот тренинг или исхрана?`,
+            text: `Здраво ${userProfile.name || 'Шампионе'}! 💪\nЈас сум твојот AI тренер. Тука сум да ти креирам персонализирани планови за вежбање и исхрана.\n\nИзбери тема подолу или прашај ме било што!`,
             timestamp: new Date()
         }
     ]);
@@ -29,13 +36,13 @@ const AITrainer: React.FC<AITrainerProps> = ({ userProfile }) => {
         scrollToBottom();
     }, [messages]);
 
-    const handleSend = async () => {
-        if (!input.trim()) return;
+    const handleSend = async (textToSend: string = input) => {
+        if (!textToSend.trim()) return;
 
         const userMsg: ChatMessage = {
             id: Date.now().toString(),
             role: 'user',
-            text: input,
+            text: textToSend,
             timestamp: new Date()
         };
 
@@ -45,22 +52,34 @@ const AITrainer: React.FC<AITrainerProps> = ({ userProfile }) => {
 
         try {
             // @ts-ignore
-            const apiKey = process.env.API_KEY;
-            if (!apiKey) throw new Error("API Key missing");
-
+            // Директно читање од Vite define
+            const apiKey = process.env.API_KEY || "AIzaSyAhFtkZkZnnKpWg5ZeAyoiS2_1WBWUbDiI";
+            
             const ai = new GoogleGenAI({ apiKey });
             
-            const systemPrompt = `You are an elite fitness trainer for the "MyFit MK" app created by Vlado Smilevski. 
-            User info: Name: ${userProfile.name}, Level: ${userProfile.level}.
-            Language: Macedonian (always reply in Macedonian).
-            Tone: Motivational, professional, direct, encouraging (like a strict but fair coach).
-            Topics: Workout advice, nutrition, recovery, explaining exercises.
-            Constraint: Keep answers concise and actionable. Use emojis occasionally.`;
+            let finalPrompt = textToSend;
+            if (textToSend.includes("ниво")) {
+                finalPrompt = textToSend + " " + userProfile.level;
+            }
+
+            const systemPrompt = `You are an elite fitness trainer for "MyFit MK". 
+            User: ${userProfile.name}, Level: ${userProfile.level}.
+            Language: Macedonian (MK).
+            
+            CRITICAL RESTRICTION INSTRUCTIONS:
+            1. You are strictly a FITNESS and NUTRITION assistant.
+            2. If the user asks about general recipes (cooking lunch) or non-fitness topics, REPLY ONLY:
+            "Ве молам за прашања поврзани со вежби или слично"
+            
+            IMPORTANT FORMATTING RULES:
+            1. Use bullet points (•).
+            2. Structure workouts clearly.
+            3. Be motivating.`;
 
             const response = await ai.models.generateContent({
                 model: 'gemini-2.5-flash',
                 contents: [
-                    { role: 'user', parts: [{ text: systemPrompt + "\n\nUser question: " + userMsg.text }] }
+                    { role: 'user', parts: [{ text: systemPrompt + "\n\nUser Request: " + finalPrompt }] }
                 ]
             });
 
@@ -75,7 +94,7 @@ const AITrainer: React.FC<AITrainerProps> = ({ userProfile }) => {
 
             setMessages(prev => [...prev, aiMsg]);
 
-        } catch (error) {
+        } catch (error: any) {
             console.error("AI Error", error);
             const errorMsg: ChatMessage = {
                 id: (Date.now() + 1).toString(),
@@ -91,68 +110,87 @@ const AITrainer: React.FC<AITrainerProps> = ({ userProfile }) => {
 
     return (
         <div className="h-full flex flex-col space-y-4 animate-in fade-in duration-500 pb-20">
-            <header className="flex items-center gap-3 border-b border-[#333] pb-4">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-accent to-red-500 flex items-center justify-center text-white shadow-lg shadow-accent/20">
-                    <Bot size={24} />
+            <header className="flex items-center gap-4 border-b border-[#333] pb-4 bg-[#121212]/50 backdrop-blur-sm sticky top-0 z-10">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-brand-700 to-brand-800 border border-brand-600 flex items-center justify-center text-accent shadow-[0_0_15px_rgba(255,109,0,0.15)] relative overflow-hidden">
+                    <div className="absolute inset-0 bg-accent/10 animate-pulse"></div>
+                    <Bot size={28} />
                 </div>
                 <div>
-                    <h2 className="text-2xl font-heading text-white tracking-wide">AI ТРЕНЕР</h2>
-                    <p className="text-xs text-brand-400 font-mono uppercase">24/7 ПОДДРШКА</p>
+                    <h2 className="text-2xl font-heading text-white tracking-wide flex items-center gap-2">
+                        AI ТРЕНЕР <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse shadow-[0_0_8px_rgba(34,197,94,0.8)]"></span>
+                    </h2>
+                    <p className="text-[10px] text-brand-400 font-mono uppercase tracking-wider">POWERED BY GEMINI 2.5</p>
                 </div>
             </header>
 
-            <div className="flex-1 overflow-y-auto space-y-4 pr-2 custom-scrollbar">
+            <div className="flex-1 overflow-y-auto space-y-6 pr-2 custom-scrollbar p-2">
                 {messages.map((msg) => (
                     <div 
                         key={msg.id} 
-                        className={`flex gap-3 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}
+                        className={`flex gap-4 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}
                     >
-                        <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mt-1 ${msg.role === 'user' ? 'bg-[#333]' : 'bg-accent/20 text-accent'}`}>
-                            {msg.role === 'user' ? <User size={16} /> : <Sparkles size={16} />}
+                        <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 mt-1 shadow-lg ${msg.role === 'user' ? 'bg-[#262626] border border-[#404040]' : 'bg-gradient-to-br from-accent to-orange-600 text-black border border-orange-400'}`}>
+                            {msg.role === 'user' ? <User size={20} className="text-brand-300" /> : <Sparkles size={20} fill="black" />}
                         </div>
                         <div 
-                            className={`max-w-[80%] p-4 rounded-2xl text-sm leading-relaxed shadow-sm ${
+                            className={`max-w-[85%] p-5 rounded-2xl text-sm leading-relaxed shadow-md whitespace-pre-wrap ${
                                 msg.role === 'user' 
                                 ? 'bg-[#262626] text-white rounded-tr-none border border-[#333]' 
-                                : 'bg-brand-800 text-brand-100 rounded-tl-none border border-brand-700'
+                                : 'bg-brand-800 text-brand-100 rounded-tl-none border border-brand-700 font-medium'
                             }`}
                         >
                             {msg.text}
-                            <div className="text-[9px] opacity-50 mt-2 text-right">
+                            <div className="text-[9px] opacity-40 mt-3 text-right font-mono uppercase">
                                 {msg.timestamp.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
                             </div>
                         </div>
                     </div>
                 ))}
+                
                 {isLoading && (
-                    <div className="flex gap-3">
-                        <div className="w-8 h-8 rounded-full bg-accent/20 text-accent flex items-center justify-center">
-                            <Bot size={16} />
+                    <div className="flex gap-4 animate-pulse">
+                        <div className="w-10 h-10 rounded-full bg-brand-800 border border-brand-700 flex items-center justify-center">
+                            <Bot size={20} className="text-brand-500" />
                         </div>
-                        <div className="bg-brand-800 p-4 rounded-2xl rounded-tl-none border border-brand-700 flex items-center gap-2">
-                            <Loader2 size={16} className="animate-spin text-accent" />
-                            <span className="text-xs text-brand-400">Тренерот пишува...</span>
+                        <div className="bg-brand-900/50 p-4 rounded-2xl rounded-tl-none border border-brand-800 flex items-center gap-3">
+                            <Loader2 size={18} className="animate-spin text-accent" />
+                            <span className="text-xs text-brand-400 font-mono uppercase tracking-widest">Генерирање план...</span>
                         </div>
                     </div>
                 )}
                 <div ref={messagesEndRef} />
             </div>
 
-            <div className="bg-[#1a1a1a] p-2 rounded-xl border border-[#333] flex items-center gap-2">
+            {!isLoading && messages.length < 4 && (
+                <div className="flex gap-2 overflow-x-auto py-2 no-scrollbar px-1">
+                    {SUGGESTIONS.map((s, i) => (
+                        <button 
+                            key={i}
+                            onClick={() => handleSend(s.prompt)}
+                            className="flex items-center gap-2 bg-[#1a1a1a] border border-[#333] hover:border-accent hover:bg-[#262626] px-4 py-2 rounded-full whitespace-nowrap transition-all group"
+                        >
+                            <s.icon size={14} className="text-brand-500 group-hover:text-accent" />
+                            <span className="text-xs text-brand-300 font-bold group-hover:text-white uppercase">{s.label}</span>
+                        </button>
+                    ))}
+                </div>
+            )}
+
+            <div className="bg-[#1a1a1a] p-2 rounded-xl border border-[#333] flex items-center gap-2 shadow-lg relative focus-within:border-accent/50 transition-colors">
                 <input 
                     type="text" 
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
                     onKeyPress={(e) => e.key === 'Enter' && handleSend()}
-                    placeholder="Прашај ме за вежби, исхрана..."
-                    className="flex-1 bg-transparent border-none text-white focus:ring-0 p-3 text-sm placeholder-brand-600 outline-none"
+                    placeholder="Прашај ме за вежби, исхрана, повреди..."
+                    className="flex-1 bg-transparent border-none text-white focus:ring-0 p-3 text-sm placeholder-brand-600 outline-none font-medium"
                 />
                 <button 
-                    onClick={handleSend}
+                    onClick={() => handleSend()}
                     disabled={isLoading || !input.trim()}
-                    className="p-3 bg-accent hover:bg-accent-hover text-black rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="p-3 bg-accent hover:bg-accent-hover text-black rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed active:scale-95 shadow-[0_0_10px_rgba(255,109,0,0.2)]"
                 >
-                    <Send size={18} />
+                    <Send size={18} fill="black" />
                 </button>
             </div>
         </div>

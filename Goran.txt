@@ -1,4 +1,8 @@
 uvek deploy.  deploy "smenet instagram" ili pod navodnici sto e smeneto
+VLADO-BOSS-KEY-2025   администратор
+-1MyFitVlado1-
+1111
+
 
 Бидејќи веќе го имаш deploy.bat фајлот, најлесниот начин е само да го повикаш него во терминалот. Не треба да ги пишуваш git командите рачно.
 Начин 1: Користејќи го твојот deploy.bat (Најлесно)
