@@ -191,7 +191,7 @@ const LicenseGate: React.FC<LicenseGateProps> = ({ onUnlock }) => {
                             </div>
                         </div>
                         {isIOS ? (
-                            <div className="text-[9px] text-white bg-black/50 px-2 py-1 rounded">Share -> Add to Home</div>
+                            <div className="text-[9px] text-white bg-black/50 px-2 py-1 rounded">Share &rarr; Add to Home</div>
                         ) : (
                             <button onClick={handleInstallClick} className="px-3 py-1 bg-accent text-black text-xs font-bold rounded hover:bg-white transition-colors">
                                 КЛИКНИ
