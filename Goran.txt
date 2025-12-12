@@ -1,0 +1,62 @@
+uvek deploy.  deploy "smenet instagram" ili pod navodnici sto e smeneto
+
+Бидејќи веќе го имаш deploy.bat фајлот, најлесниот начин е само да го повикаш него во терминалот. Не треба да ги пишуваш git командите рачно.
+Начин 1: Користејќи го твојот deploy.bat (Најлесно)
+Кога ќе направиш измена (пример, нов линк за Инстаграм), само напиши во терминалот:
+code
+Cmd
+deploy
+Потоа скриптата ќе те праша за опис, напиши го (пр. "nov instagram link") и стисни Enter. Тоа е сè! Скриптата ќе направи Build, ќе додаде, ќе комитува и ќе пушти на GitHub.
+Начин 2: Рачна „Комбо“ команда (ако не сакаш да чекаш Build)
+Ако си направил само мала измена (текст или линк) и не сакаш да чекаш npm run build (бидејќи GitHub Pages понекогаш сам си прави build, или ако само чуваш код), можеш да ја искористиш оваа „комбо“ команда директно во терминалот. Ова ги извршува сите 3 git команди одеднаш:
+code
+Cmd
+git add . && git commit -m "smenet link" && git push
+(Само замени го "smenet link" со твој опис).
+Напред: Подобрен deploy.bat (За уште побрзо)
+Ако сакаш да биде уште побрзо и да не те прашува за опис, туку да го напишеш веднаш до командата (пример: deploy "nov link"), замени го твојот deploy.bat со овој код подолу.
+Ова ќе ти овозможи да напишеш само: deploy "smenet instagram" и тој ќе заврши сè сам без да те прашува ништо.
+code
+Batch
+@echo off
+echo ==========================================
+echo      MYFIT MK - AVTOMATSKO OBJAVUVANJE
+echo ==========================================
+echo.
+
+:: 1. Proverka dali e vnesen opis kako argument
+if "%~1"=="" (
+    set /p commit_msg="Vnesi opis za promenite: "
+) else (
+    set commit_msg=%~1
+)
+
+echo.
+echo 1. Pravam Build na aplikacijata...
+call npm run build
+IF %ERRORLEVEL% NEQ 0 (
+    echo [GRESKA] Build procesot ne uspea. Proverete go kodot.
+    pause
+    exit /b
+)
+
+echo.
+echo 2. Dodavam promeni vo Git...
+git add .
+
+echo.
+echo 3. Potvrduvam so opis: "%commit_msg%"
+git commit -m "%commit_msg%"
+
+echo.
+echo 4. Prakjam na GitHub...
+git push origin main
+
+echo.
+echo ==========================================
+echo      [USPESHNO] SE E SPREMNO!
+echo ==========================================
+Како се користи овој нов deploy.bat?
+Отвори терминал.
+Напиши: deploy "smenet link"
+Готово!
