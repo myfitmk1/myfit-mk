@@ -4,10 +4,9 @@ import react from '@vitejs/plugin-react'
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
+  // Load env file based on `mode` in the current working directory.
+  // Set the third parameter to '' to load all env regardless of the `VITE_` prefix.
   const env = loadEnv(mode, process.cwd(), '');
-  
-  // КЛУЧНО: Ова осигурува дека клучот е достапен и на GitHub Pages
-  const apiKey = "AIzaSyAhFtkZkZnnKpWg5ZeAyoiS2_1WBWUbDiI";
   
   return {
     base: './', 
@@ -17,7 +16,8 @@ export default defineConfig(({ mode }) => {
       emptyOutDir: true,
     },
     define: {
-      'process.env.API_KEY': JSON.stringify(apiKey)
+      // Pass the API key securely to the client side
+      'process.env.API_KEY': JSON.stringify(env.VITE_API_KEY)
     }
   }
 })

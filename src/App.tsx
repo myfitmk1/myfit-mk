@@ -138,7 +138,11 @@ const App: React.FC = () => {
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    if (passwordInput === APP_PASSWORD) {
+    
+    // Check if user has set a custom password, otherwise use default
+    const currentPassword = localStorage.getItem('myfit_custom_password') || APP_PASSWORD;
+
+    if (passwordInput === currentPassword) {
       vibrate();
       setIsAuthenticated(true);
       sessionStorage.setItem('myfit_auth', 'true');
@@ -152,10 +156,18 @@ const App: React.FC = () => {
 
   const handleLogout = () => {
       vibrate();
+      // Remove ALL authentication keys
       sessionStorage.removeItem('myfit_auth');
+      localStorage.removeItem('myfit_license_key');
+      
+      // Reset states
       setIsAuthenticated(false);
+      setHasValidLicense(false);
       setPasswordInput('');
       setIsRadioPlaying(false);
+      
+      // Force reload to ensure LicenseGate triggers correctly
+      window.location.reload();
   };
 
   const toggleFavorite = (id: string) => {

@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { AppSettings, UserProfile, ExerciseLevel } from '../types';
-import { Moon, Bell, Download, Trash2, User, ChevronRight, Shield, Share2, Phone, Mail, MessageSquare, Instagram, Facebook, Smartphone, LogOut, Sparkles } from 'lucide-react';
+import { Moon, Bell, Download, Trash2, User, ChevronRight, Shield, Share2, Phone, Mail, MessageSquare, Instagram, Smartphone, LogOut, Sparkles, Key } from 'lucide-react';
 import { SOCIAL_LINKS } from '../constants';
 
 interface SettingsProps {
@@ -16,6 +16,8 @@ interface SettingsProps {
 const Settings: React.FC<SettingsProps> = ({ settings, profile, onUpdateSettings, onUpdateProfile, onResetData, onLogout }) => {
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
   const [isIOS, setIsIOS] = useState(false);
+  const [newPassword, setNewPassword] = useState('');
+  const [passwordSaved, setPasswordSaved] = useState(false);
 
   useEffect(() => {
     // Check if device is iOS
@@ -56,6 +58,17 @@ const Settings: React.FC<SettingsProps> = ({ settings, profile, onUpdateSettings
       document.body.appendChild(downloadAnchorNode);
       downloadAnchorNode.click();
       downloadAnchorNode.remove();
+  };
+
+  const handleChangePassword = () => {
+      if (newPassword.length < 4) {
+          alert("Лозинката мора да има барем 4 карактери.");
+          return;
+      }
+      localStorage.setItem('myfit_custom_password', newPassword);
+      setPasswordSaved(true);
+      setTimeout(() => setPasswordSaved(false), 2000);
+      setNewPassword('');
   };
 
   return (
@@ -111,6 +124,35 @@ const Settings: React.FC<SettingsProps> = ({ settings, profile, onUpdateSettings
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+
+        {/* Security & Password Section */}
+        <div className="metal-card rounded-xl border border-[#333] p-6 relative group overflow-hidden">
+             <h3 className="text-2xl font-heading text-white mb-6 flex items-center gap-2 tracking-wide">
+                <span className="w-1 h-6 bg-accent"></span> БЕЗБЕДНОСТ
+            </h3>
+            
+            <div className="bg-[#121212] p-4 rounded-lg border border-[#333] mb-4">
+                <label className="block text-xs font-bold text-brand-400 uppercase mb-2 flex items-center gap-2">
+                    <Key size={14} /> ПРОМЕНИ ЛОЗИНКА
+                </label>
+                <div className="flex gap-2">
+                    <input 
+                        type="password" 
+                        value={newPassword} 
+                        onChange={(e) => setNewPassword(e.target.value)}
+                        placeholder="ВНЕСИ НОВА ЛОЗИНКА..."
+                        className="flex-1 p-3 rounded-lg border border-[#333] bg-black text-white focus:border-accent outline-none"
+                    />
+                    <button 
+                        onClick={handleChangePassword}
+                        className={`px-6 py-2 rounded-lg font-bold text-xs uppercase transition-all ${passwordSaved ? 'bg-green-600 text-white' : 'bg-brand-700 hover:bg-brand-600 text-white'}`}
+                    >
+                        {passwordSaved ? 'ЗАЧУВАНО!' : 'СМЕНИ'}
+                    </button>
+                </div>
+                <p className="text-[10px] text-brand-600 mt-2 font-mono">Ова ќе ја замени стандардната лозинка (1111) со ваша.</p>
             </div>
         </div>
 
@@ -195,9 +237,9 @@ const Settings: React.FC<SettingsProps> = ({ settings, profile, onUpdateSettings
                     <Instagram size={28} className="mb-2" />
                     <span className="font-heading tracking-wide">INSTAGRAM</span>
                 </a>
-                <a href={SOCIAL_LINKS.facebook} target="_blank" rel="noopener noreferrer" className="flex flex-col items-center justify-center p-4 bg-[#121212] border border-[#333] rounded-lg hover:border-blue-500 hover:text-blue-500 text-brand-400 transition-all">
-                    <Facebook size={28} className="mb-2" />
-                    <span className="font-heading tracking-wide">FACEBOOK</span>
+                <a href={SOCIAL_LINKS.viber} target="_blank" rel="noopener noreferrer" className="flex flex-col items-center justify-center p-4 bg-[#121212] border border-[#333] rounded-lg hover:border-purple-500 hover:text-purple-500 text-brand-400 transition-all">
+                    <Phone size={28} className="mb-2" />
+                    <span className="font-heading tracking-wide">VIBER</span>
                 </a>
             </div>
         </div>
@@ -268,7 +310,7 @@ const Settings: React.FC<SettingsProps> = ({ settings, profile, onUpdateSettings
                 </div>
                 
                 <h3 className="text-3xl font-heading text-white mb-1 tracking-wider text-glow">MYFIT MK</h3>
-                <p className="text-xs font-mono text-brand-500 uppercase tracking-widest mb-6">ВЕРЗИЈА 2.3.0</p>
+                <p className="text-xs font-mono text-brand-500 uppercase tracking-widest mb-6">ВЕРЗИЈА 2.4.0</p>
                 
                 {/* Changelog Description */}
                 <div className="bg-[#1a1a1a] rounded-lg p-4 border border-[#333] mb-6 text-left max-w-lg mx-auto shadow-inner">

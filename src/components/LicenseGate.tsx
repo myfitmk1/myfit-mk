@@ -1,8 +1,8 @@
 
 import React, { useState, useEffect } from 'react';
-import { Lock, Unlock, ShieldCheck, Copy, Check, Key, CalendarClock, UserCheck, Smartphone, LogIn } from 'lucide-react';
+import { Lock, Unlock, ShieldCheck, Copy, Check, Key, UserCheck, Smartphone, LogIn, Instagram, Phone } from 'lucide-react';
 import { getDeviceId, validateLicenseKey, generateLicenseKey } from '../utils/licenseManager';
-import { ADMIN_GENERATOR_CODE } from '../constants';
+import { ADMIN_GENERATOR_CODE, SOCIAL_LINKS } from '../constants';
 
 interface LicenseGateProps {
     onUnlock: () => void;
@@ -30,6 +30,13 @@ const LicenseGate: React.FC<LicenseGateProps> = ({ onUnlock }) => {
         
         // Check local license
         const savedKey = localStorage.getItem('myfit_license_key');
+        
+        // Check for Admin Bypass or Valid License
+        if (savedKey === 'MYFIT-ADMIN-MASTER-ACCESS') {
+            onUnlock();
+            return;
+        }
+
         if (savedKey) {
             const result = validateLicenseKey(savedKey, id);
             if (result.valid) {
@@ -78,6 +85,12 @@ const LicenseGate: React.FC<LicenseGateProps> = ({ onUnlock }) => {
         }
     };
 
+    const handleAdminEnterApp = () => {
+        // Save a master key so the admin doesn't need to type the code again
+        localStorage.setItem('myfit_license_key', 'MYFIT-ADMIN-MASTER-ACCESS');
+        onUnlock();
+    };
+
     const handleGenerateKey = () => {
         if (!targetId.trim()) {
             alert("Внесете го ID-то на корисникот!");
@@ -106,9 +119,9 @@ const LicenseGate: React.FC<LicenseGateProps> = ({ onUnlock }) => {
                     </div>
 
                     <div className="space-y-6">
-                        {/* Enter App Button for Admin */}
+                        {/* Enter App Button for Admin - NOW PERSISTENT */}
                         <button 
-                            onClick={onUnlock}
+                            onClick={handleAdminEnterApp}
                             className="w-full py-4 bg-green-600 hover:bg-green-500 text-white font-heading text-xl rounded transition-all active:scale-95 shadow-lg flex items-center justify-center gap-2 mb-4 border border-green-400"
                         >
                             <LogIn size={24} /> ВЛЕЗИ ВО АПЛИКАЦИЈА
@@ -178,7 +191,7 @@ const LicenseGate: React.FC<LicenseGateProps> = ({ onUnlock }) => {
         <div className="min-h-screen bg-brand-900 flex flex-col items-center justify-center p-6 relative overflow-hidden">
             <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/dark-matter.png')] opacity-50"></div>
             
-            <div className="metal-card w-full max-w-md p-8 rounded-3xl relative z-10 shadow-2xl border border-[#333]">
+            <div className="metal-card w-full max-w-md p-8 rounded-3xl relative z-10 shadow-2xl border border-[#333] flex flex-col">
                 <div className="flex justify-center mb-6">
                     <div className="w-20 h-20 bg-brand-800 rounded-full flex items-center justify-center border-2 border-brand-600 shadow-[0_0_20px_rgba(255,109,0,0.3)]">
                         <Lock size={32} className="text-accent" />
@@ -250,10 +263,17 @@ const LicenseGate: React.FC<LicenseGateProps> = ({ onUnlock }) => {
                     </button>
                 </div>
 
-                <div className="mt-8 pt-6 border-t border-[#333] text-center">
-                    <p className="text-[10px] text-brand-600 font-mono flex items-center justify-center gap-1">
-                        <ShieldCheck size={12} /> SYSTEM SECURED BY MYFIT
-                    </p>
+                {/* Social Links Footer - Changed to Insta & Viber */}
+                <div className="mt-8 pt-6 border-t border-[#333] flex justify-center gap-6">
+                    <a href={SOCIAL_LINKS.instagram} target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-1 text-brand-500 hover:text-pink-500 transition-colors group">
+                        <Instagram size={28} />
+                        <span className="text-[9px] uppercase font-bold opacity-0 group-hover:opacity-100 transition-opacity">Insta</span>
+                    </a>
+                    
+                    <a href={SOCIAL_LINKS.viber} target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-1 text-brand-500 hover:text-purple-500 transition-colors group">
+                        <Phone size={28} />
+                        <span className="text-[9px] uppercase font-bold opacity-0 group-hover:opacity-100 transition-opacity">Viber</span>
+                    </a>
                 </div>
             </div>
         </div>

@@ -1,8 +1,10 @@
+
 {
   "name": "myfit-mk",
   "private": true,
   "version": "2.0.0",
   "type": "module",
+  "homepage": "https://myfitmk1.github.io/myfit-mk",
   "scripts": {
     "dev": "vite --port 5175 --host",
     "build": "tsc && vite build",

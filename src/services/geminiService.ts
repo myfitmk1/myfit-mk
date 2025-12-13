@@ -5,24 +5,33 @@ import { StatItem } from "../types";
 // Helper to get AI instance safely
 const getAI = () => {
   // @ts-ignore
-  // Vite ќе го замени process.env.API_KEY со вистинскиот стринг при Build
   const apiKey = process.env.API_KEY;
   
   if (!apiKey || apiKey.includes("API_KEY")) {
     console.warn("API Key is missing or invalid.");
-    // Fallback just in case
-    return new GoogleGenAI({ apiKey: "AIzaSyAhFtkZkZnnKpWg5ZeAyoiS2_1WBWUbDiI" });
+    // We throw error here to be caught by the caller
+    throw new Error("Невалиден API Клуч во конфигурацијата.");
   }
   return new GoogleGenAI({ apiKey });
 };
 
+const handleGeminiError = (error: any): string => {
+    console.error("Gemini Error:", error);
+    if (error.message) {
+        if (error.message.includes("403") || error.message.includes("PERMISSION_DENIED")) {
+            return "⛔ ГРЕШКА 403: Google го блокираше барањето. Проверете дали `http://localhost:5175/*` е додаден во 'Website Restrictions' во Google Cloud Console.";
+        } else if (error.message.includes("429")) {
+            return "⏳ Системот е преоптоварен. Ве молиме обидете се повторно за минута.";
+        }
+    }
+    return `Грешка: ${error.message || "Проверете интернет конекција."}`;
+};
+
 export const generatePlan = async (topic: string): Promise<string> => {
-  const ai = getAI();
-  
   try {
-    const prompt = `Create a detailed, well-structured plan for the following request: "${topic}". 
-    Format the output with clear headings, bullet points, and actionable steps. 
-    Do not use markdown code blocks, just plain text with formatting characters is fine.`;
+    const ai = getAI();
+    const prompt = `Create a detailed, well-structured fitness plan for: "${topic}". 
+    Format with clear headings and bullet points. Language: Macedonian.`;
 
     const response = await ai.models.generateContent({
       model: 'gemini-2.5-flash',
@@ -32,17 +41,15 @@ export const generatePlan = async (topic: string): Promise<string> => {
       }
     });
 
-    return response.text || "No plan generated.";
-  } catch (error) {
-    console.error("Gemini Error:", error);
-    return "Грешка при генерирање на планот. Проверете интернет конекција.";
+    return response.text || "Не успеав да генерирам план.";
+  } catch (error: any) {
+    return handleGeminiError(error);
   }
 };
 
 export const generateImage = async (prompt: string): Promise<string> => {
-  const ai = getAI();
-  
   try {
+    const ai = getAI();
     const response = await ai.models.generateContent({
       model: 'gemini-2.5-flash-image',
       contents: {
@@ -64,7 +71,7 @@ export const generateImage = async (prompt: string): Promise<string> => {
         }
       }
     }
-    throw new Error("No image data found");
+    throw new Error("Нема слика во одговорот.");
   } catch (error) {
     console.error("Gemini Image Error:", error);
     throw error;
@@ -72,16 +79,11 @@ export const generateImage = async (prompt: string): Promise<string> => {
 };
 
 export const analyzeTextToStats = async (text: string): Promise<StatItem[]> => {
-  const ai = getAI();
-  
   try {
+    const ai = getAI();
     const response = await ai.models.generateContent({
       model: 'gemini-2.5-flash',
-      contents: `Analyze the following text and categorize the time or activities mentioned into a list of categories with values. 
-      The input text is: "${text}".
-      Return a JSON array of objects with 'name' (string) and 'value' (number). 
-      If unit is not specified, assume hours or a generic count.
-      Example output: [{"name": "Work", "value": 5}, {"name": "Exercise", "value": 1}]`,
+      contents: `Analyze text: "${text}". Return JSON array of objects with 'name' (string) and 'value' (number).`,
       config: {
         responseMimeType: "application/json",
         responseSchema: {
@@ -89,14 +91,8 @@ export const analyzeTextToStats = async (text: string): Promise<StatItem[]> => {
           items: {
             type: Type.OBJECT,
             properties: {
-              name: {
-                type: Type.STRING,
-                description: "Name of the category or activity"
-              },
-              value: {
-                type: Type.NUMBER,
-                description: "Numerical value associated with the activity"
-              }
+              name: { type: Type.STRING },
+              value: { type: Type.NUMBER }
             },
             required: ["name", "value"]
           }
@@ -106,7 +102,6 @@ export const analyzeTextToStats = async (text: string): Promise<StatItem[]> => {
 
     const jsonStr = response.text;
     if (!jsonStr) return [];
-    
     return JSON.parse(jsonStr) as StatItem[];
   } catch (e) {
     console.error("Failed to parse JSON", e);
