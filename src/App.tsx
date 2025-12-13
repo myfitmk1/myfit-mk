@@ -7,11 +7,11 @@ import Stats from './components/Stats';
 import CalendarView from './components/CalendarView';
 import Gallery from './components/Gallery';
 import Settings from './components/Settings';
-import LicenseGate from './components/LicenseGate'; // New Import
-import AITrainer from './components/AITrainer';     // New Import
+import LicenseGate from './components/LicenseGate';
+import AITrainer from './components/AITrainer';
 import { View, AppData, Exercise, Routine, GalleryImage } from './types';
 import { APP_PASSWORD } from './constants';
-import { Lock, Radio, PlayCircle, PauseCircle } from 'lucide-react';
+import { Lock, Radio, PauseCircle } from 'lucide-react';
 
 const INITIAL_DATA: AppData = {
   userProfile: { name: '', level: 'Почетник', joinedDate: new Date().toISOString() },
@@ -27,7 +27,7 @@ const INITIAL_DATA: AppData = {
 const RADIO_STREAM_URL = "https://streams.ilovemusic.de/iloveradio10.mp3"; 
 
 const App: React.FC = () => {
-  const [hasValidLicense, setHasValidLicense] = useState(false); // New State for License
+  const [hasValidLicense, setHasValidLicense] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [passwordInput, setPasswordInput] = useState('');
   const [passwordError, setPasswordError] = useState(false);
@@ -45,15 +45,9 @@ const App: React.FC = () => {
 
   // Load Data & Security Protocols
   useEffect(() => {
-    // Force dark mode class on body
     document.body.classList.add('dark');
     
-    // Security: Prevent Right Click
-    const handleContextMenu = (e: MouseEvent) => {
-      e.preventDefault();
-    };
-
-    // Security: Prevent Shortcuts
+    const handleContextMenu = (e: MouseEvent) => { e.preventDefault(); };
     const handleKeyDown = (e: KeyboardEvent) => {
       if (
         e.key === 'F12' || 
@@ -70,7 +64,6 @@ const App: React.FC = () => {
     document.addEventListener('keydown', handleKeyDown);
 
     const savedData = localStorage.getItem('myfit_data');
-    // Use sessionStorage for Auth (session expires on close)
     const auth = sessionStorage.getItem('myfit_auth');
     
     if (savedData) {
@@ -156,17 +149,12 @@ const App: React.FC = () => {
 
   const handleLogout = () => {
       vibrate();
-      // Remove ALL authentication keys
       sessionStorage.removeItem('myfit_auth');
       localStorage.removeItem('myfit_license_key');
-      
-      // Reset states
       setIsAuthenticated(false);
       setHasValidLicense(false);
       setPasswordInput('');
       setIsRadioPlaying(false);
-      
-      // Force reload to ensure LicenseGate triggers correctly
       window.location.reload();
   };
 
@@ -346,12 +334,10 @@ const App: React.FC = () => {
       );
   }
 
-  // STEP 1: LICENSE CHECK (FIRST LAYER)
   if (!hasValidLicense) {
       return <LicenseGate onUnlock={() => setHasValidLicense(true)} />;
   }
 
-  // STEP 2: PASSWORD CHECK (SECOND LAYER)
   if (!isAuthenticated) {
     return (
       <div className="h-screen flex items-center justify-center p-4 bg-brand-900 bg-[url('https://www.transparenttextures.com/patterns/dark-matter.png')]">
@@ -392,7 +378,6 @@ const App: React.FC = () => {
   return (
     <div className="flex flex-col md:flex-row min-h-screen bg-brand-900 text-zinc-100 font-sans transition-colors duration-300">
       
-      {/* Mobile Top Header */}
       <header className="md:hidden bg-brand-800 border-b border-brand-700 sticky top-0 z-40 px-4 py-3 flex items-center justify-between shadow-lg">
          <div className="flex items-center gap-3 w-full">
             <div className="w-10 h-10 bg-brand-700 rounded-lg flex items-center justify-center text-accent border border-brand-600 shadow-md flex-shrink-0 overflow-hidden">

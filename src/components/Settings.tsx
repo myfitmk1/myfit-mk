@@ -152,7 +152,7 @@ const Settings: React.FC<SettingsProps> = ({ settings, profile, onUpdateSettings
                         {passwordSaved ? 'ЗАЧУВАНО!' : 'СМЕНИ'}
                     </button>
                 </div>
-                <p className="text-[10px] text-brand-600 mt-2 font-mono">Ова ќе ја замени стандардната лозинка (1111) со ваша.</p>
+                <p className="text-[10px] text-brand-600 mt-2 font-mono">Ова ќе ја замени стандардната лозинка со ваша.</p>
             </div>
         </div>
 
@@ -339,10 +339,6 @@ const Settings: React.FC<SettingsProps> = ({ settings, profile, onUpdateSettings
                 </div>
 
                 <div className="pt-6">
-                    <div className="flex justify-center gap-4 text-xs font-mono text-brand-500 mb-2">
-                        <span className="px-2 py-1 bg-black/30 rounded border border-[#333]">260+ ВЕЖБИ</span>
-                        <span className="px-2 py-1 bg-black/30 rounded border border-[#333]">100% БЕСПЛАТНО</span>
-                    </div>
                     <p className="text-[10px] text-brand-600 uppercase tracking-widest mb-1">КРЕАТОР</p>
                     <p className="text-lg font-heading text-white flex items-center justify-center gap-2 tracking-wide">
                         <span className="w-2 h-2 bg-accent rounded-full animate-pulse"></span>

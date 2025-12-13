@@ -1,3 +1,4 @@
+
 import React, { useState, useMemo } from 'react';
 import { EXERCISE_DATABASE, CATEGORY_ICONS } from '../constants';
 import { Exercise, ExerciseLevel } from '../types';
@@ -40,7 +41,7 @@ const Exercises: React.FC<ExercisesProps> = ({ userLevel, favorites, onToggleFav
     return allExercises.filter(ex => ex.level === userLevel).slice(0, 3);
   }, [allExercises, userLevel, searchTerm, selectedCategory, selectedLevel]);
 
-  const categories = ['all', ...Object.keys(EXERCISE_DATABASE)];
+  const categories = Object.keys(EXERCISE_DATABASE);
 
   return (
     <div className="h-full flex flex-col space-y-6 animate-in fade-in duration-500 pb-20">
@@ -67,18 +68,6 @@ const Exercises: React.FC<ExercisesProps> = ({ userLevel, favorites, onToggleFav
              <div className="flex gap-2">
                 <div className="relative">
                     <select 
-                        value={selectedCategory} 
-                        onChange={(e) => setSelectedCategory(e.target.value)}
-                        className="appearance-none pl-4 pr-10 py-4 rounded-lg border border-[#333] bg-[#1a1a1a] text-brand-300 font-bold text-xs uppercase outline-none cursor-pointer hover:border-brand-500 focus:border-accent w-full sm:w-auto"
-                    >
-                        <option value="all">КАТЕГОРИИ</option>
-                        {Object.keys(EXERCISE_DATABASE).map(c => <option key={c} value={c}>{c}</option>)}
-                    </select>
-                    <Filter size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-brand-500 pointer-events-none" />
-                </div>
-                
-                <div className="relative">
-                    <select 
                         value={selectedLevel} 
                         onChange={(e) => setSelectedLevel(e.target.value)}
                         className="appearance-none pl-4 pr-10 py-4 rounded-lg border border-[#333] bg-[#1a1a1a] text-brand-300 font-bold text-xs uppercase outline-none cursor-pointer hover:border-brand-500 focus:border-accent w-full sm:w-auto"
@@ -94,19 +83,30 @@ const Exercises: React.FC<ExercisesProps> = ({ userLevel, favorites, onToggleFav
           </div>
         </header>
 
-        <div className="flex gap-3 overflow-x-auto pb-2 no-scrollbar">
-           {categories.slice(1).map(cat => (
+        {/* Categories Grid - Wrapped to show all */}
+        <div className="flex flex-wrap gap-2">
+           <button 
+               onClick={() => setSelectedCategory('all')}
+               className={`px-4 py-2 rounded text-xs font-heading tracking-wider transition-all border ${
+                 selectedCategory === 'all'
+                 ? 'bg-white text-black border-white shadow-[0_0_10px_rgba(255,255,255,0.4)]' 
+                 : 'bg-[#1a1a1a] text-brand-400 border-[#333] hover:border-brand-500 hover:text-white'
+               }`}
+             >
+               СИТЕ
+           </button>
+           {categories.map(cat => (
              <button 
                key={cat}
                onClick={() => setSelectedCategory(cat === selectedCategory ? 'all' : cat)}
-               className={`px-5 py-3 rounded text-sm font-heading tracking-wider whitespace-nowrap transition-all border skew-x-[-10deg] ${
+               className={`px-4 py-2 rounded text-xs font-heading tracking-wider transition-all border flex items-center gap-2 ${
                  selectedCategory === cat 
                  ? 'bg-accent text-black border-accent shadow-[0_0_10px_rgba(255,109,0,0.4)]' 
                  : 'bg-[#1a1a1a] text-brand-400 border-[#333] hover:border-brand-500 hover:text-white'
                }`}
              >
-               <span className="skew-x-[10deg] inline-block mr-2">{CATEGORY_ICONS[cat]}</span>
-               <span className="skew-x-[10deg] inline-block">{cat.toUpperCase()}</span>
+               <span>{CATEGORY_ICONS[cat]}</span>
+               <span>{cat.toUpperCase()}</span>
              </button>
            ))}
         </div>
