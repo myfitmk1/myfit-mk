@@ -10,6 +10,20 @@ body {
     overscroll-behavior-y: none;
     background-color: #121212;
     color: #e5e5e5;
+    
+    /* Prevent text selection globally */
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+/* Allow text selection in inputs, textareas and code blocks (for license IDs) */
+input, textarea, code, .select-text {
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
 }
 
 /* Ensure smooth scrolling */

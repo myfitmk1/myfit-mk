@@ -47,7 +47,22 @@ const App: React.FC = () => {
   useEffect(() => {
     document.body.classList.add('dark');
     
-    const handleContextMenu = (e: MouseEvent) => { e.preventDefault(); };
+    // 1. Prevent Right Click
+    const handleContextMenu = (e: MouseEvent) => { 
+        e.preventDefault(); 
+    };
+
+    // 2. Prevent Copying (Ctrl+C), but allow in inputs
+    const handleCopy = (e: ClipboardEvent) => {
+        const target = e.target as HTMLElement;
+        // Allow copying if the user is typing in an Input, Textarea, or Code block (License ID)
+        if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.tagName === 'CODE') {
+            return;
+        }
+        e.preventDefault();
+    };
+
+    // 3. Prevent DevTools shortcuts
     const handleKeyDown = (e: KeyboardEvent) => {
       if (
         e.key === 'F12' || 
@@ -62,6 +77,7 @@ const App: React.FC = () => {
 
     document.addEventListener('contextmenu', handleContextMenu);
     document.addEventListener('keydown', handleKeyDown);
+    document.addEventListener('copy', handleCopy);
 
     const savedData = localStorage.getItem('myfit_data');
     const auth = sessionStorage.getItem('myfit_auth');
@@ -85,6 +101,7 @@ const App: React.FC = () => {
     return () => {
       document.removeEventListener('contextmenu', handleContextMenu);
       document.removeEventListener('keydown', handleKeyDown);
+      document.removeEventListener('copy', handleCopy);
     };
   }, []);
 
