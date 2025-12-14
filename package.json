@@ -2,7 +2,7 @@
 {
   "name": "myfit-mk",
   "private": true,
-  "version": "2.0.0",
+  "version": "2.1.0",
   "type": "module",
   "homepage": "https://myfitmk1.github.io/myfit-mk",
   "scripts": {
@@ -13,7 +13,7 @@
     "deploy": "gh-pages -d dist"
   },
   "dependencies": {
-    "@google/genai": "*",
+    "@google/genai": "^0.1.0",
     "lucide-react": "^0.344.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -28,3 +28,4 @@
     "vite": "^5.2.0"
   }
 }
+    
