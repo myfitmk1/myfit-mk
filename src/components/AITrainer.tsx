@@ -15,6 +15,19 @@ const SUGGESTIONS = [
     { label: "Совет за Опоравување", icon: Zap, prompt: "Како најбрзо да се опоравам после тежок тренинг на нозе?" }
 ];
 
+// Helper to decode API key safely
+const getDecodedKey = () => {
+    // @ts-ignore
+    const rawKey = process.env.API_KEY || "";
+    try {
+        // If key starts with AIza, it's raw (dev mode). If not, try decoding base64.
+        if (rawKey.startsWith("AIza")) return rawKey;
+        return atob(rawKey);
+    } catch (e) {
+        return rawKey;
+    }
+};
+
 const AITrainer: React.FC<AITrainerProps> = ({ userProfile }) => {
     const [messages, setMessages] = useState<ChatMessage[]>([
         {
@@ -51,12 +64,11 @@ const AITrainer: React.FC<AITrainerProps> = ({ userProfile }) => {
         setIsLoading(true);
 
         try {
-            // Retrieve API key safely from environment variables (Defined in vite.config.ts)
-            // @ts-ignore
-            const apiKey = process.env.API_KEY;
+            // Retrieve and decode key
+            const apiKey = getDecodedKey();
             
             // Basic Validation
-            if (!apiKey || apiKey.includes("API_KEY") || apiKey.length < 10) {
+            if (!apiKey || apiKey.length < 10) {
                 throw new Error("MISSING_KEY");
             }
 
@@ -104,7 +116,7 @@ const AITrainer: React.FC<AITrainerProps> = ({ userProfile }) => {
             let errorMessage = "Се појави неочекувана грешка.";
             
             if (error.message === "MISSING_KEY") {
-                errorMessage = "⚠️ НЕДОСТАСУВА API КЛУЧ\n\nПроверете дали фајлот .env постои локално и дали содржи VITE_API_KEY.";
+                errorMessage = "⚠️ НЕДОСТАСУВА API КЛУЧ\n\nАпликацијата не може да го пронајде API клучот. Проверете ја конфигурацијата.";
             } else if (error.message.includes("403") || error.message.includes("PERMISSION_DENIED") || error.message.includes("fetch failed")) {
                 errorMessage = `⛔ ПРИСТАПОТ Е ОДБИЕН (403)
 
@@ -117,7 +129,7 @@ Google го блокираше барањето. Најчеста причина
 1. Кликни на копчето подолу.
 2. Кликни на името на клучот.
 3. Под "Application restrictions" избери "Web sites".
-4. Додај ги: https://myfitmk1.github.io/ и http://localhost:5175/`;
+4. Додај ги: https://myfitmk1.github.io/* и http://localhost:5175/*`;
             } else if (error.message.includes("429")) {
                 errorMessage = "⏳ Системот е преоптоварен. Ве молиме почекајте малку пред следното прашање.";
             } else {
