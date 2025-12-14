@@ -23,8 +23,8 @@ const INITIAL_DATA: AppData = {
   settings: { darkMode: true, soundNotifications: true, workoutReminders: false }
 };
 
-// I Love Radio - Workout (High Quality HTTPS Stream)
-const RADIO_STREAM_URL = "https://streams.ilovemusic.de/iloveradio10.mp3"; 
+// Heart Dance UK - High Energy Workout Music (English)
+const RADIO_STREAM_URL = "https://media-ssl.musicradio.com/HeartDance"; 
 
 const App: React.FC = () => {
   const [hasValidLicense, setHasValidLicense] = useState(false);
