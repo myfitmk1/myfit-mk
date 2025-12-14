@@ -305,7 +305,8 @@ const Settings: React.FC<SettingsProps> = ({ settings, profile, onUpdateSettings
             <div className="relative z-10">
                 <div className="flex justify-center mb-4">
                     <div className="w-20 h-20 bg-gradient-to-br from-brand-700 to-brand-800 rounded-xl flex items-center justify-center text-accent border border-brand-600 shadow-lg overflow-hidden">
-                        <img src="myfitmklogo.jpg" alt="Logo" className="w-full h-full object-cover" />
+                        {/* Corrected Path for GitHub Pages: /myfit-mk/myfitmklogo.jpg */}
+                        <img src="/myfit-mk/myfitmklogo.jpg" alt="Logo" className="w-full h-full object-cover" />
                     </div>
                 </div>
                 

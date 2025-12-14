@@ -1,19 +1,21 @@
+
 {
   "name": "MyFit MK - Владо Смилевски",
   "short_name": "MyFit MK",
-  "start_url": ".",
+  "start_url": "/myfit-mk/",
+  "scope": "/myfit-mk/",
   "display": "standalone",
   "background_color": "#121212",
   "theme_color": "#FF6D00",
   "orientation": "portrait",
   "icons": [
     {
-      "src": "myfitmklogo.jpg",
+      "src": "/myfit-mk/myfitmklogo.jpg",
       "sizes": "192x192",
       "type": "image/jpeg"
     },
     {
-      "src": "myfitmklogo.jpg",
+      "src": "/myfit-mk/myfitmklogo.jpg",
       "sizes": "512x512",
       "type": "image/jpeg"
     }

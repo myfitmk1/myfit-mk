@@ -381,7 +381,8 @@ const App: React.FC = () => {
       <header className="md:hidden bg-brand-800 border-b border-brand-700 sticky top-0 z-40 px-4 py-3 flex items-center justify-between shadow-lg">
          <div className="flex items-center gap-3 w-full">
             <div className="w-10 h-10 bg-brand-700 rounded-lg flex items-center justify-center text-accent border border-brand-600 shadow-md flex-shrink-0 overflow-hidden">
-                <img src="myfitmklogo.jpg" alt="Logo" className="w-full h-full object-cover" />
+                {/* Fixed Logo Path: includes subfolder /myfit-mk/ */}
+                <img src="/myfit-mk/myfitmklogo.jpg" alt="Logo" className="w-full h-full object-cover" />
             </div>
             <div className="flex flex-col items-start justify-center flex-1 overflow-hidden">
                 <h1 className="text-xl font-heading text-white leading-none tracking-wide truncate w-full text-glow">MYFIT MK</h1>

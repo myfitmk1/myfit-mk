@@ -2,14 +2,14 @@
 import React from 'react';
 import { View } from '../types';
 import { VIEWS } from '../constants';
-import { Dumbbell, Radio, PauseCircle, PlayCircle } from 'lucide-react';
+import { Radio, PauseCircle } from 'lucide-react';
 
 interface NavigationProps {
   currentView: View;
   onViewChange: (view: View) => void;
   favoritesCount: number;
-  isRadioPlaying: boolean;
-  onToggleRadio: () => void;
+  isRadioPlaying?: boolean;
+  onToggleRadio?: () => void;
 }
 
 const Navigation: React.FC<NavigationProps> = ({ currentView, onViewChange, favoritesCount, isRadioPlaying, onToggleRadio }) => {
@@ -22,7 +22,8 @@ const Navigation: React.FC<NavigationProps> = ({ currentView, onViewChange, favo
             <div className="flex items-center gap-4">
                 {/* Logo Image */}
                 <div className="w-16 h-16 bg-gradient-to-br from-brand-700 to-brand-800 rounded-xl flex items-center justify-center text-accent border border-brand-600 shadow-lg shadow-black/40 flex-shrink-0 overflow-hidden">
-                    <img src="myfitmklogo.jpg" alt="MyFit MK" className="w-full h-full object-cover" />
+                    {/* Fixed path for GitHub Pages: /myfit-mk/myfitmklogo.jpg */}
+                    <img src="/myfit-mk/myfitmklogo.jpg" alt="MyFit MK" className="w-full h-full object-cover" />
                 </div>
                 
                 {/* Title Block */}
@@ -36,30 +37,8 @@ const Navigation: React.FC<NavigationProps> = ({ currentView, onViewChange, favo
                 </div>
             </div>
 
-            {/* Radio Player Desktop */}
-            <button 
-                onClick={onToggleRadio}
-                className={`flex items-center justify-between p-3 rounded-lg border transition-all duration-300 group
-                    ${isRadioPlaying 
-                        ? 'bg-accent/10 border-accent text-accent shadow-[0_0_10px_rgba(255,109,0,0.2)]' 
-                        : 'bg-[#1a1a1a] border-[#333] text-brand-400 hover:text-white hover:border-brand-500'
-                    }
-                `}
-            >
-                <div className="flex items-center gap-3">
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center ${isRadioPlaying ? 'bg-accent text-black animate-pulse' : 'bg-[#262626]'}`}>
-                        <Radio size={16} />
-                    </div>
-                    <div className="text-left">
-                        <span className="block text-xs font-bold uppercase tracking-wide">WORKOUT RADIO</span>
-                        <span className="block text-[9px] font-mono opacity-70">{isRadioPlaying ? 'LIVE • ON AIR' : 'OFF AIR'}</span>
-                    </div>
-                </div>
-                {isRadioPlaying ? <PauseCircle size={20} /> : <PlayCircle size={20} />}
-            </button>
-
             {/* Motto Section */}
-            <div className="pt-2 border-t border-[#333] flex flex-col gap-1">
+            <div className="pt-5 border-t border-[#333] flex flex-col gap-1">
                  <p className="text-sm font-heading text-white font-bold leading-none tracking-wider uppercase whitespace-nowrap">
                     ТВОЈ ПРЕДИЗВИК - ТВОЈА ПОБЕДА
                  </p>
@@ -67,6 +46,17 @@ const Navigation: React.FC<NavigationProps> = ({ currentView, onViewChange, favo
                     ЈАК ДЕНЕС - ПОЈАК УТРЕ
                  </p>
             </div>
+
+            {/* Desktop Radio Button */}
+            {onToggleRadio && (
+                <button 
+                    onClick={onToggleRadio}
+                    className={`mt-4 w-full py-3 rounded-lg border flex items-center justify-center gap-3 font-heading tracking-wide transition-all ${isRadioPlaying ? 'bg-accent border-accent text-black animate-pulse shadow-[0_0_15px_rgba(255,109,0,0.4)]' : 'bg-[#1a1a1a] border-[#333] text-brand-400 hover:bg-[#262626] hover:text-white hover:border-brand-500'}`}
+                >
+                    {isRadioPlaying ? <PauseCircle size={20} /> : <Radio size={20} />}
+                    <span className="text-sm">{isRadioPlaying ? 'LIVE RADIO ON' : 'START RADIO'}</span>
+                </button>
+            )}
         </div>
       </div>
 
